@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "Z5MyXtDOa28=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\jelle\\source\\repos\\TestTechwin\\WebApplication1\\WebApplication1\\WebApplication1.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\jelle\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.12\\microsoft.aspnetcore.openapi.10.0.12.nupkg.sha512",
+    "C:\\Users\\jelle\\.nuget\\packages\\microsoft.openapi\\2.12.0\\microsoft.openapi.2.12.0.nupkg.sha512"
+  ],
+  "logs": []
+}
