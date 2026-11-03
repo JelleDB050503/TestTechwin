@@ -1,41 +1,48 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
-
-var summaries = new[]
+app.MapGet("/health", () => Results.Ok(new
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    status = "ok"
+}))
+.WithName("Health");
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/oauth/{provider}/callback", (string provider, string? error) =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
+    if (!IsSupportedProvider(provider))
+    {
+        return Results.NotFound();
+    }
+
+    var title = error is null
+        ? "OAuth callback received"
+        : "OAuth authorization failed";
+    var message = error is null
+        ? "The callback was received. OAuth session processing is not configured yet."
+        : "The OAuth provider reported an authorization error. You may close this window.";
+
+    return Results.Content(
+        $$"""
+        <!doctype html>
+        <html lang="en">
+        <head><meta charset="utf-8"><title>{{title}}</title></head>
+        <body><h1>{{title}}</h1><p>{{message}}</p></body>
+        </html>
+        """,
+        "text/html; charset=utf-8");
 })
-.WithName("GetWeatherForecast");
+.WithName("OAuthCallback");
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+static bool IsSupportedProvider(string provider) =>
+    provider.Equals("billit", StringComparison.OrdinalIgnoreCase) ||
+    provider.Equals("exact", StringComparison.OrdinalIgnoreCase);

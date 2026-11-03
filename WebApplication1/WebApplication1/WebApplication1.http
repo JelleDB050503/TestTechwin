@@ -1,6 +1,11 @@
 @WebApplication1_HostAddress = http://localhost:5066
 
-GET {{WebApplication1_HostAddress}}/weatherforecast/
+GET {{WebApplication1_HostAddress}}/health
 Accept: application/json
+
+###
+
+GET {{WebApplication1_HostAddress}}/oauth/billit/callback
+Accept: text/html
 
 ###
